@@ -205,13 +205,7 @@ session_start();
                     <label for="appointmentReason">Reason for Visit</label>
                     <select id="appointmentReason" name="appointmentReason" class="form-control" required>
                         <option value="">Select reason</option>
-                        <option value="Annual Checkup">Annual Checkup</option>
-                        <option value="Vaccination">Vaccination</option>
-                        <option value="Illness">Illness</option>
-                        <option value="Injury">Injury</option>
-                        <option value="Dental Care">Dental Care</option>
-                        <option value="Grooming">Grooming</option>
-                        <option value="Other">Other</option>
+                        <!-- Options will be populated dynamically -->
                     </select>
                 </div>
 
@@ -275,15 +269,24 @@ session_start();
     </footer>
 
     <script>
-        // Global variables to store registered pets and appointments
+        // Global variables to store registered pets, appointments and types
         let registeredPets = [];
         let appointments = [];
+        let appointmentTypes = [];
 
         async function fetchPets() {
             const response = await fetch('get_pets.php');
             const data = await response.json().catch(() => ({success:false}));
             if (data.success) {
                 registeredPets = data.pets;
+            }
+        }
+
+        async function fetchAppointmentTypes() {
+            const response = await fetch('get_appointment_types.php');
+            const data = await response.json().catch(() => ({success:false}));
+            if (data.success) {
+                appointmentTypes = data.types;
             }
         }
 
@@ -415,6 +418,23 @@ session_start();
                 });
             }
 
+            const reasonSelect = document.getElementById('appointmentReason');
+            reasonSelect.innerHTML = '<option value="">Select reason</option>';
+            if (appointmentTypes.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = 'No appointment types available';
+                opt.disabled = true;
+                reasonSelect.appendChild(opt);
+            } else {
+                appointmentTypes.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type.id;
+                    option.textContent = type.name;
+                    reasonSelect.appendChild(option);
+                });
+            }
+
             document.getElementById('bookingModal').style.display = 'flex';
         }
 
@@ -516,9 +536,13 @@ session_start();
                 return;
             }
 
+            const reasonSelect = document.getElementById('appointmentReason');
+            const typeId = reasonSelect.value;
+            const reasonText = reasonSelect.options[reasonSelect.selectedIndex].textContent;
+
             const formData = new FormData(this);
             formData.append('pet_id', petId);
-            formData.append('type_id', 1);
+            formData.append('type_id', typeId);
 
             const response = await fetch('book_appointment.php', {
                 method: 'POST',
@@ -533,7 +557,7 @@ session_start();
                     date: document.getElementById('appointmentDate').value,
                     time: document.getElementById('startTime').value + ' - ' + document.getElementById('endTime').value,
                     vet: document.getElementById('modalVet').textContent,
-                    reason: document.getElementById('appointmentReason').value,
+                    reason: reasonText,
                     notes: document.getElementById('appointmentNotes').value,
                     bookingDate: new Date().toLocaleDateString()
                 };
@@ -550,6 +574,7 @@ session_start();
         // Initialize data and show home section
         fetchPets();
         fetchSchedule();
+        fetchAppointmentTypes();
         showHome();
     </script>
 </body>
