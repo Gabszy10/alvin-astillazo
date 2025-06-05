@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -516,9 +519,15 @@
             <nav>
                 <ul>
                     <li><a href="#" class="active" onclick="showHome()">Home</a></li>
-                    <li><a href="#" onclick="showSchedule()">Schedule</a></li>
-                    <li><a href="#" onclick="showRegistration()">Register Pet</a></li>
-                    <li><a href="#" onclick="showAppointments()">My Appointments</a></li>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <li><a href="#" onclick="showSchedule()">Schedule</a></li>
+                        <li><a href="#" onclick="showRegistration()">Register Pet</a></li>
+                        <li><a href="#" onclick="showAppointments()">My Appointments</a></li>
+                        <li><a href="logout.php">Logout</a></li>
+                    <?php else: ?>
+                        <li><a href="register.php">Register</a></li>
+                        <li><a href="login.php">Login</a></li>
+                    <?php endif; ?>
                 </ul>
             </nav>
         </div>
@@ -626,21 +635,9 @@
 
         <!-- Registration Section -->
         <section class="registration-section section">
+        <?php if (isset($_SESSION['user_id'])): ?>
             <h2>Register Your Pet</h2>
             <form id="registrationForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="ownerName">Owner's Full Name</label>
-                        <input type="text" id="ownerName" name="ownerName" class="form-control" placeholder="John Doe"
-                            required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ownerEmail">Email Address</label>
-                        <input type="email" id="ownerEmail" name="ownerEmail" class="form-control"
-                            placeholder="john@example.com" required>
-                    </div>
-                </div>
-
                 <div class="form-row">
                     <div class="form-group">
                         <label for="ownerPhone">Phone Number</label>
@@ -699,6 +696,9 @@
 
                 <button type="submit" class="btn">Register Pet</button>
             </form>
+        <?php else: ?>
+            <p>Please <a href="login.php">login</a> to register your pet.</p>
+        <?php endif; ?>
         </section>
 
         <!-- Appointments Section -->

@@ -1,15 +1,17 @@
 <?php
 require_once 'config.php';
+session_start();
 
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_SESSION['user_id'])) {
+        echo json_encode(['success' => false, 'error' => 'User not logged in']);
+        exit();
+    }
+
     $conn = getDBConnection();
 
-    // Owner details are collected but, without a user system, they are not
-    // persisted. A static user_id value will be used for now.
-    $ownerName = $conn->real_escape_string($_POST['ownerName'] ?? '');
-    $ownerEmail = $conn->real_escape_string($_POST['ownerEmail'] ?? '');
     $ownerPhone = $conn->real_escape_string($_POST['ownerPhone'] ?? '');
     $petName = $conn->real_escape_string($_POST['petName'] ?? '');
     $petType = $conn->real_escape_string($_POST['petType'] ?? '');
@@ -33,9 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $petBreed = 'Unknown';
     }
 
-    // Insert into the existing `pets` table with a static user_id of 1
+    // Insert pet for the logged in user
+    $userId = (int)$_SESSION['user_id'];
     $sql = "INSERT INTO pets (user_id, pet_name, pet_type, breed, age, gender, special_notes) " .
-           "VALUES (1, '$petName', '$petTypeNormalized', '$petBreed', $petAge, '$petGenderNormalized', '$petNotes')";
+           "VALUES ($userId, '$petName', '$petTypeNormalized', '$petBreed', $petAge, '$petGenderNormalized', '$petNotes')";
 
     if ($conn->query($sql)) {
         $id = $conn->insert_id;
