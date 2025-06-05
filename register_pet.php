@@ -12,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $conn = getDBConnection();
 
-    $ownerPhone = $conn->real_escape_string($_POST['ownerPhone'] ?? '');
     $petName = $conn->real_escape_string($_POST['petName'] ?? '');
     $petType = $conn->real_escape_string($_POST['petType'] ?? '');
     $petBreed = $conn->real_escape_string($_POST['petBreed'] ?? '');
