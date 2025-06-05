@@ -25,17 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        form { max-width: 400px; margin: 0 auto; }
-        .error { color: red; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; }
-        input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 8px; }
-        button { padding: 10px 15px; }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<?php include 'header.php'; ?>
+<div class="container">
 <h2>Create Account</h2>
 <?php if ($error): ?>
 <p class="error"><?php echo $error; ?></p>
@@ -60,5 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit">Register</button>
 </form>
 <p>Already have an account? <a href="login.php">Login here</a></p>
+</div>
 </body>
 </html>
