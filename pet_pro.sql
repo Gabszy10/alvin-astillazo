@@ -86,6 +86,26 @@ CREATE TABLE `pet_breeds` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `registered_pets`
+--
+
+CREATE TABLE `registered_pets` (
+  `id` int(11) NOT NULL,
+  `owner_name` varchar(100) NOT NULL,
+  `owner_email` varchar(100) NOT NULL,
+  `owner_phone` varchar(20) NOT NULL,
+  `pet_name` varchar(50) NOT NULL,
+  `pet_type` varchar(50) NOT NULL,
+  `pet_breed` varchar(50) DEFAULT NULL,
+  `pet_age` int(11) DEFAULT NULL,
+  `pet_gender` varchar(20) DEFAULT NULL,
+  `pet_notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -163,6 +183,12 @@ ALTER TABLE `pet_breeds`
   ADD UNIQUE KEY `pet_type` (`pet_type`,`breed_name`);
 
 --
+-- Indexes for table `registered_pets`
+--
+ALTER TABLE `registered_pets`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -210,6 +236,12 @@ ALTER TABLE `pets`
 --
 ALTER TABLE `pet_breeds`
   MODIFY `breed_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `registered_pets`
+--
+ALTER TABLE `registered_pets`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`

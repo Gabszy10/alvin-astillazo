@@ -925,33 +925,40 @@
         // Form submission handlers
         document.getElementById('registrationForm').addEventListener('submit', function (event) {
             event.preventDefault();
-            
-            // Create pet object
-            const pet = {
-                id: Date.now().toString(),
-                ownerName: document.getElementById('ownerName').value,
-                ownerEmail: document.getElementById('ownerEmail').value,
-                ownerPhone: document.getElementById('ownerPhone').value,
-                name: document.getElementById('petName').value,
-                type: document.getElementById('petType').value,
-                breed: document.getElementById('petBreed').value,
-                age: document.getElementById('petAge').value,
-                gender: document.getElementById('petGender').value,
-                notes: document.getElementById('petNotes').value,
-                registrationDate: new Date().toLocaleDateString()
-            };
-            
-            // Add to registered pets
-            registeredPets.push(pet);
-            
-            // Reset form
-            this.reset();
-            
-            // Show success message
-            alert(`${pet.name} has been registered successfully!`);
-            
-            // Optionally show schedule to book appointment
-            showSchedule();
+
+            const form = this;
+            const formData = new FormData(form);
+
+            fetch('register_pet.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const pet = {
+                            id: data.id.toString(),
+                            ownerName: formData.get('ownerName'),
+                            ownerEmail: formData.get('ownerEmail'),
+                            ownerPhone: formData.get('ownerPhone'),
+                            name: formData.get('petName'),
+                            type: formData.get('petType'),
+                            breed: formData.get('petBreed'),
+                            age: formData.get('petAge'),
+                            gender: formData.get('petGender'),
+                            notes: formData.get('petNotes'),
+                            registrationDate: new Date().toLocaleDateString()
+                        };
+
+                        registeredPets.push(pet);
+                        form.reset();
+                        alert(`${pet.name} has been registered successfully!`);
+                        showSchedule();
+                    } else {
+                        alert('Error registering pet.');
+                    }
+                })
+                .catch(() => alert('Error registering pet.'));
         });
         
         document.getElementById('appointmentForm').addEventListener('submit', function (event) {
