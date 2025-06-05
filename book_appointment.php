@@ -32,32 +32,6 @@ if (!$petId || !$vetId || !$date || !$start || !$end) {
 
 $dayOfWeek = date('l', strtotime($date));
 
-// Check vet availability
-$stmt = $conn->prepare("SELECT availability_id FROM vet_availability WHERE vet_id=? AND day_of_week=? AND is_available=1 AND start_time<=? AND end_time>=?");
-$stmt->bind_param('isss', $vetId, $dayOfWeek, $start, $end);
-$stmt->execute();
-$res = $stmt->get_result();
-if ($res->num_rows === 0) {
-    echo json_encode(['success' => false, 'error' => 'Vet not available for the selected time']);
-    $stmt->close();
-    $conn->close();
-    exit();
-}
-$stmt->close();
-
-// Check for conflicting appointments
-$stmt = $conn->prepare("SELECT appointment_id FROM appointments WHERE vet_id=? AND appointment_date=? AND ((start_time < ? AND end_time > ?) OR (start_time < ? AND end_time > ?) OR (start_time>=? AND start_time< ?))");
-$stmt->bind_param('issssss', $vetId, $date, $end, $start, $start, $end, $start, $end);
-$stmt->execute();
-$res = $stmt->get_result();
-if ($res->num_rows > 0) {
-    echo json_encode(['success' => false, 'error' => 'Time slot already booked']);
-    $stmt->close();
-    $conn->close();
-    exit();
-}
-$stmt->close();
-
 // Insert appointment
 $stmt = $conn->prepare("INSERT INTO appointments (user_id, pet_id, vet_id, type_id, appointment_date, start_time, end_time, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 $stmt->bind_param('iiiissss', $userId, $petId, $vetId, $typeId, $date, $start, $end, $notes);
