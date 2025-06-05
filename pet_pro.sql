@@ -162,6 +162,7 @@ ALTER TABLE `pet_breeds`
   ADD PRIMARY KEY (`breed_id`),
   ADD UNIQUE KEY `pet_type` (`pet_type`,`breed_name`);
 
+
 --
 -- Indexes for table `users`
 --
@@ -210,6 +211,7 @@ ALTER TABLE `pets`
 --
 ALTER TABLE `pet_breeds`
   MODIFY `breed_id` int(11) NOT NULL AUTO_INCREMENT;
+
 
 --
 -- AUTO_INCREMENT for table `users`
