@@ -6,6 +6,8 @@ header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn = getDBConnection();
 
+    // Owner details are collected but, without a user system, they are not
+    // persisted. A static user_id value will be used for now.
     $ownerName = $conn->real_escape_string($_POST['ownerName'] ?? '');
     $ownerEmail = $conn->real_escape_string($_POST['ownerEmail'] ?? '');
     $ownerPhone = $conn->real_escape_string($_POST['ownerPhone'] ?? '');
@@ -16,8 +18,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $petGender = $conn->real_escape_string($_POST['petGender'] ?? '');
     $petNotes = $conn->real_escape_string($_POST['petNotes'] ?? '');
 
-    $sql = "INSERT INTO registered_pets (owner_name, owner_email, owner_phone, pet_name, pet_type, pet_breed, pet_age, pet_gender, pet_notes) " .
-           "VALUES ('$ownerName', '$ownerEmail', '$ownerPhone', '$petName', '$petType', '$petBreed', $petAge, '$petGender', '$petNotes')";
+    // Normalize values to match enum types in the `pets` table
+    $petTypeNormalized = strtolower($petType);
+    if (!in_array($petTypeNormalized, ['dog', 'cat', 'bird', 'rabbit'])) {
+        $petTypeNormalized = 'other';
+    }
+
+    $petGenderNormalized = strtolower($petGender);
+    if (!in_array($petGenderNormalized, ['male', 'female'])) {
+        $petGenderNormalized = 'other';
+    }
+
+    if ($petBreed === '') {
+        $petBreed = 'Unknown';
+    }
+
+    // Insert into the existing `pets` table with a static user_id of 1
+    $sql = "INSERT INTO pets (user_id, pet_name, pet_type, breed, age, gender, special_notes) " .
+           "VALUES (1, '$petName', '$petTypeNormalized', '$petBreed', $petAge, '$petGenderNormalized', '$petNotes')";
 
     if ($conn->query($sql)) {
         $id = $conn->insert_id;
