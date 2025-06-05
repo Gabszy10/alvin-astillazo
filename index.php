@@ -96,43 +96,7 @@ session_start();
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>Monday</td>
-                        <td>10:00 AM - 12:00 PM</td>
-                        <td>Dr. Sarah Johnson</td>
-                        <td><span class="badge badge-available">Available</span></td>
-                        <td><button class="btn"
-                                onclick="showBookingModal('Monday', '10:00 AM - 12:00 PM', 'Dr. Sarah Johnson')">Book
-                                Now</button></td>
-                    </tr>
-                    <tr>
-                        <td>Tuesday</td>
-                        <td>2:00 PM - 4:00 PM</td>
-                        <td>Dr. Michael Chen</td>
-                        <td><span class="badge badge-available">Available</span></td>
-                        <td><button class="btn"
-                                onclick="showBookingModal('Tuesday', '2:00 PM - 4:00 PM', 'Dr. Michael Chen')">Book
-                                Now</button></td>
-                    </tr>
-                    <tr>
-                        <td>Wednesday</td>
-                        <td>10:00 AM - 12:00 PM</td>
-                        <td>Dr. Emily Wilson</td>
-                        <td><span class="badge badge-booked">Limited</span></td>
-                        <td><button class="btn"
-                                onclick="showBookingModal('Wednesday', '10:00 AM - 12:00 PM', 'Dr. Emily Wilson')">Book
-                                Now</button></td>
-                    </tr>
-                    <tr>
-                        <td>Friday</td>
-                        <td>1:00 PM - 3:00 PM</td>
-                        <td>Dr. Robert Garcia</td>
-                        <td><span class="badge badge-available">Available</span></td>
-                        <td><button class="btn"
-                                onclick="showBookingModal('Friday', '1:00 PM - 3:00 PM', 'Dr. Robert Garcia')">Book
-                                Now</button></td>
-                    </tr>
+                <tbody id="scheduleBody">
                 </tbody>
             </table>
         </section>
@@ -218,6 +182,10 @@ session_start();
                 <div class="form-group">
                     <label>Date & Time</label>
                     <p id="modalDateTime" style="font-weight: bold; margin-bottom: 1rem;"></p>
+                    <input type="hidden" id="appointmentDate" name="appointment_date">
+                    <input type="hidden" id="startTime" name="start_time">
+                    <input type="hidden" id="endTime" name="end_time">
+                    <input type="hidden" id="vetId" name="vet_id">
                 </div>
 
                 <div class="form-group">
@@ -311,6 +279,43 @@ session_start();
         let registeredPets = [];
         let appointments = [];
 
+        async function fetchPets() {
+            const response = await fetch('get_pets.php');
+            const data = await response.json().catch(() => ({success:false}));
+            if (data.success) {
+                registeredPets = data.pets;
+            }
+        }
+
+        async function fetchSchedule() {
+            const response = await fetch('get_available_times.php');
+            const data = await response.json().catch(() => ({success:false}));
+            if (data.success) {
+                const body = document.getElementById('scheduleBody');
+                body.innerHTML = '';
+                data.times.forEach(slot => {
+                    const timeRange = formatTime(slot.start_time) + ' - ' + formatTime(slot.end_time);
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${slot.day}</td>
+                        <td>${timeRange}</td>
+                        <td>${slot.vet}</td>
+                        <td><span class="badge badge-available">Available</span></td>
+                        <td><button class="btn" onclick="showBookingModal('${slot.day}', '${timeRange}', '${slot.vet}', ${slot.vet_id}, '${slot.start_time}', '${slot.end_time}')">Book Now</button></td>
+                    `;
+                    body.appendChild(tr);
+                });
+            }
+        }
+
+        function formatTime(timeStr) {
+            const [h, m] = timeStr.split(':');
+            let hour = parseInt(h, 10);
+            const suffix = hour >= 12 ? 'PM' : 'AM';
+            hour = hour % 12 || 12;
+            return `${hour}:${m} ${suffix}`;
+        }
+
         // Show different sections
         function showHome() {
             document.querySelector('.home-section').style.display = 'block';
@@ -371,9 +376,25 @@ session_start();
         }
 
         // Modal functions
-        function showBookingModal(day, time, vet) {
-            document.getElementById('modalDateTime').textContent = `${day}, ${time}`;
+        function getNextDateForDay(day) {
+            const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            const today = new Date();
+            const target = days.indexOf(day);
+            if (target === -1) return '';
+            let diff = (target - today.getDay() + 7) % 7;
+            if (diff === 0) diff = 7;
+            const d = new Date(today);
+            d.setDate(today.getDate() + diff);
+            return d.toISOString().split('T')[0];
+        }
+
+        function showBookingModal(day, timeRange, vet, vetId, start, end) {
+            document.getElementById('modalDateTime').textContent = `${day}, ${timeRange}`;
             document.getElementById('modalVet').textContent = vet;
+            document.getElementById('appointmentDate').value = getNextDateForDay(day);
+            document.getElementById('startTime').value = start;
+            document.getElementById('endTime').value = end;
+            document.getElementById('vetId').value = vetId;
 
             // Populate pets dropdown
             const petSelect = document.getElementById('appointmentPet');
@@ -470,7 +491,9 @@ session_start();
                 })
                 .then(data => {
                     if (data.success) {
-                        // Your existing pet registration logic
+                        form.reset();
+                        alert('Pet registered successfully.');
+                        fetchPets();
                     } else {
                         alert('Error registering pet.');
                     }
@@ -482,7 +505,7 @@ session_start();
 
         });
 
-        document.getElementById('appointmentForm').addEventListener('submit', function (event) {
+        document.getElementById('appointmentForm').addEventListener('submit', async function (event) {
             event.preventDefault();
 
             const petId = document.getElementById('appointmentPet').value;
@@ -493,32 +516,40 @@ session_start();
                 return;
             }
 
-            // Create appointment object
-            const appointment = {
-                id: Date.now().toString(),
-                petId: petId,
-                date: document.getElementById('modalDateTime').textContent.split(',')[0],
-                time: document.getElementById('modalDateTime').textContent.split(',')[1].trim(),
-                vet: document.getElementById('modalVet').textContent,
-                reason: document.getElementById('appointmentReason').value,
-                notes: document.getElementById('appointmentNotes').value,
-                bookingDate: new Date().toLocaleDateString()
-            };
+            const formData = new FormData(this);
+            formData.append('pet_id', petId);
+            formData.append('type_id', 1);
 
-            // Add to appointments
-            appointments.push(appointment);
+            const response = await fetch('book_appointment.php', {
+                method: 'POST',
+                body: formData
+            });
 
-            // Close modal and reset form
-            closeModal();
-
-            // Show success message
-            alert(`Appointment booked successfully for ${pet.name}!`);
-
-            // Show appointments
-            showAppointments();
+            const data = await response.json().catch(() => ({success:false}));
+            if (data.success) {
+                const appointment = {
+                    id: data.id,
+                    petId: petId,
+                    date: document.getElementById('appointmentDate').value,
+                    time: document.getElementById('startTime').value + ' - ' + document.getElementById('endTime').value,
+                    vet: document.getElementById('modalVet').textContent,
+                    reason: document.getElementById('appointmentReason').value,
+                    notes: document.getElementById('appointmentNotes').value,
+                    bookingDate: new Date().toLocaleDateString()
+                };
+                appointments.push(appointment);
+                closeModal();
+                alert(`Appointment booked successfully for ${pet.name}!`);
+                showAppointments();
+                fetchSchedule();
+            } else {
+                alert('Error booking appointment.');
+            }
         });
 
-        // Initialize by showing home section
+        // Initialize data and show home section
+        fetchPets();
+        fetchSchedule();
         showHome();
     </script>
 </body>
