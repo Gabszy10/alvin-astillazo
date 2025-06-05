@@ -3,7 +3,7 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', 'password');
-define('DB_NAME', 'petcare_pro');
+define('DB_NAME', 'pet_pro');
 
 function getDBConnection() {
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
