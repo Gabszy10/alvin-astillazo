@@ -640,11 +640,6 @@ session_start();
             <form id="registrationForm">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="ownerPhone">Phone Number</label>
-                        <input type="tel" id="ownerPhone" name="ownerPhone" class="form-control"
-                            placeholder="(123) 456-7890" required>
-                    </div>
-                    <div class="form-group">
                         <label for="petName">Pet's Name</label>
                         <input type="text" id="petName" name="petName" class="form-control" placeholder="Buddy"
                             required>
