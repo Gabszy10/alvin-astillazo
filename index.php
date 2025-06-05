@@ -290,6 +290,14 @@ session_start();
             }
         }
 
+        async function fetchAppointments() {
+            const response = await fetch('get_appointments.php');
+            const data = await response.json().catch(() => ({success:false}));
+            if (data.success) {
+                appointments = data.appointments;
+            }
+        }
+
         async function fetchSchedule() {
             const response = await fetch('get_available_times.php');
             const data = await response.json().catch(() => ({success:false}));
@@ -350,7 +358,7 @@ session_start();
             updateActiveNav('register');
         }
 
-        function showAppointments() {
+        async function showAppointments() {
             document.querySelector('.home-section').style.display = 'none';
             document.querySelector('.schedule-section').style.display = 'none';
             document.querySelector('.registration-section').style.display = 'none';
@@ -359,6 +367,7 @@ session_start();
             // Update active nav link
             updateActiveNav('appointments');
 
+            await fetchAppointments();
             // Display appointments if any exist
             displayAppointments();
         }
@@ -575,6 +584,7 @@ session_start();
         fetchPets();
         fetchSchedule();
         fetchAppointmentTypes();
+        fetchAppointments();
         showHome();
     </script>
 </body>
