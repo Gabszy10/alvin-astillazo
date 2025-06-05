@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 $conn = getDBConnection();
 $userId = (int)$_SESSION['user_id'];
 
-$sql = "SELECT a.appointment_id, a.pet_id, a.appointment_date, a.start_time, a.end_time, a.notes, a.created_at, v.full_name AS vet_name, t.type_name FROM appointments a JOIN vets v ON a.vet_id = v.vet_id JOIN appointment_types t ON a.type_id = t.type_id WHERE a.user_id = $userId ORDER BY a.appointment_date DESC, a.start_time DESC";
+$sql = "SELECT a.appointment_id, a.pet_id, a.appointment_date, a.start_time, a.end_time, a.notes, a.created_at, v.full_name AS vet_name, t.type_name FROM appointments a JOIN vets v ON a.vet_id = v.vet_id JOIN appointment_types t ON a.type_id = t.type_id WHERE a.user_id = $userId AND a.status='scheduled' ORDER BY a.appointment_date DESC, a.start_time DESC";
 $result = $conn->query($sql);
 $appointments = [];
 if ($result) {

@@ -489,11 +489,23 @@ session_start();
             appointmentsList.innerHTML = html;
         }
 
-        function cancelAppointment(appointmentId) {
+        async function cancelAppointment(appointmentId) {
             if (confirm('Are you sure you want to cancel this appointment?')) {
-                appointments = appointments.filter(app => app.id !== appointmentId);
-                displayAppointments();
-                alert('Appointment cancelled successfully.');
+                const formData = new FormData();
+                formData.append("appointment_id", appointmentId);
+
+                const response = await fetch("cancel_appointment.php", {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await response.json().catch(() => ({success:false}));
+                if (data.success) {
+                    appointments = appointments.filter(app => app.id !== appointmentId);
+                    displayAppointments();
+                    alert("Appointment cancelled successfully.");
+                } else {
+                    alert("Error cancelling appointment.");
+                }
             }
         }
 
