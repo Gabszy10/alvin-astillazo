@@ -86,18 +86,6 @@ session_start();
         <section class="schedule-section section">
             <h2>Available Veterinary Schedule</h2>
             <p>Check the available times to book an appointment with our veterinarians:</p>
-            <div class="form-group" style="max-width:200px;margin-bottom:1rem;">
-                <label for="schedulePetFilter">Pet Type</label>
-                <select id="schedulePetFilter" class="form-control">
-                    <option value="dog">Dog</option>
-                    <option value="cat">Cat</option>
-                    <option value="bird">Bird</option>
-                    <option value="rabbit">Rabbit</option>
-                    <option value="reptile">Reptile</option>
-                    <option value="small mammal">Small Mammal</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
             <table class="schedule-table">
                 <thead>
                     <tr>
@@ -311,9 +299,8 @@ session_start();
             }
         }
 
-        async function fetchSchedule(petType) {
-            const url = 'get_available_times.php' + (petType ? `?pet_type=${encodeURIComponent(petType)}` : '');
-            const response = await fetch(url);
+        async function fetchSchedule() {
+            const response = await fetch('get_available_times.php');
             const data = await response.json().catch(() => ({success:false}));
             if (data.success) {
                 const body = document.getElementById('scheduleBody');
@@ -360,8 +347,7 @@ session_start();
 
            // Update active nav link
            updateActiveNav('schedule');
-            const petType = document.getElementById('schedulePetFilter').value;
-            fetchSchedule(petType);
+           fetchSchedule();
        }
 
         function showRegistration() {
@@ -620,8 +606,7 @@ session_start();
                 closeModal();
                 alert(`Appointment booked successfully for ${pet.name}!`);
                 showAppointments();
-                const petTypeAfterBook = document.getElementById('schedulePetFilter').value;
-                fetchSchedule(petTypeAfterBook);
+                fetchSchedule();
             } else {
                 alert('Error booking appointment.');
             }
@@ -629,12 +614,8 @@ session_start();
 
         // Initialize data and show home section
         fetchPets();
-        const initialType = document.getElementById('schedulePetFilter').value;
-        fetchSchedule(initialType);
-        document.getElementById('schedulePetFilter').addEventListener('change', e => {
-            fetchSchedule(e.target.value);
-        });
-        fetchAppointmentTypes(initialType);
+        fetchSchedule();
+        fetchAppointmentTypes();
         fetchAppointments();
         showHome();
     </script>

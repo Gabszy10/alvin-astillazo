@@ -4,13 +4,7 @@ header('Content-Type: application/json');
 
 $conn = getDBConnection();
 
-$petType = strtolower($_GET['pet_type'] ?? '');
-$petFilter = '';
-if ($petType) {
-    $petFilter = " AND LOWER(v.specialization) = '" . $conn->real_escape_string($petType) . "'";
-}
-
-$sql = "SELECT a.availability_id, a.vet_id, a.day_of_week, a.start_time, a.end_time, v.full_name, v.specialization FROM vet_availability a JOIN vets v ON a.vet_id = v.vet_id WHERE a.is_available = 1" . $petFilter . " ORDER BY FIELD(a.day_of_week,'Monday','Tuesday','Wednesday','Thursday','Friday'), a.start_time";
+$sql = "SELECT a.availability_id, a.vet_id, a.day_of_week, a.start_time, a.end_time, v.full_name FROM vet_availability a JOIN vets v ON a.vet_id = v.vet_id WHERE a.is_available = 1 ORDER BY FIELD(a.day_of_week,'Monday','Tuesday','Wednesday','Thursday','Friday'), a.start_time";
 $result = $conn->query($sql);
 
 $times = [];
@@ -22,8 +16,7 @@ if ($result) {
             'day' => $row['day_of_week'],
             'start_time' => $row['start_time'],
             'end_time' => $row['end_time'],
-            'vet' => $row['full_name'],
-            'specialization' => $row['specialization']
+            'vet' => $row['full_name']
         ];
     }
 }
