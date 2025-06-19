@@ -50,6 +50,7 @@ CREATE TABLE `appointments` (
 CREATE TABLE `appointment_types` (
   `type_id` int(11) NOT NULL,
   `type_name` varchar(50) NOT NULL,
+  `pet_type` enum('dog','cat','bird','rabbit','reptile','small mammal','other') NOT NULL,
   `description` text DEFAULT NULL,
   `duration_minutes` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
