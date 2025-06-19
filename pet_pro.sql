@@ -244,12 +244,24 @@ ALTER TABLE `users`
 --
 ALTER TABLE `vets`
   MODIFY `vet_id` int(11) NOT NULL AUTO_INCREMENT;
+-- Sample veterinarians
+INSERT INTO `vets` (`full_name`, `specialization`, `contact_number`, `email`, `password_hash`) VALUES
+('Dr. Sarah Paws', 'Canine Medicine', '555-0101', 'sarah.paws@example.com', '$2b$12$3etSLk5uvC9r2AbA9ik/TO/WdWF/rmYWgrAIHAsGPokEo7IOL28qe'),
+('Dr. Felix Whiskers', 'Feline Health', '555-0102', 'felix.whiskers@example.com', '$2b$12$C953LxnBuAWYPHnsfzQlAeWhKjDa521lINNc0ZqaV.viBX08HZpY2'),
+('Dr. Polly Feathers', 'Avian Care', '555-0103', 'polly.feathers@example.com', '$2b$12$eljaq2MmBFl/pODYCBoCk.hX9jT0WM9j5AUv0aws8D62t/cKJzuJa'),
+('Dr. Rex Scales', 'Reptile & Exotic Pets', '555-0104', 'rex.scales@example.com', '$2b$12$B46K9l/4iZXVTfv3mLOgX./jqppkkUKpsRSFlF/Bm9u3fPBbC8gv.');
 
 --
 -- AUTO_INCREMENT for table `vet_availability`
 --
 ALTER TABLE `vet_availability`
   MODIFY `availability_id` int(11) NOT NULL AUTO_INCREMENT;
+-- Sample vet availability
+INSERT INTO `vet_availability` (`vet_id`, `day_of_week`, `start_time`, `end_time`, `is_available`) VALUES
+(1, 'Monday', '09:00:00', '12:00:00', 1),
+(2, 'Tuesday', '09:00:00', '12:00:00', 1),
+(3, 'Wednesday', '09:00:00', '12:00:00', 1),
+(4, 'Thursday', '09:00:00', '12:00:00', 1);
 
 --
 -- Constraints for dumped tables
