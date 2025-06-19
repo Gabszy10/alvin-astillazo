@@ -51,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
         <br>
         <p>Don't have an account? <a href="register.php">Register here</a></p>
+        <p>Are you a veterinarian? <a href="doctor_login.php">Doctor Login</a></p>
     </div>
 </body>
 
