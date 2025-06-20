@@ -172,11 +172,6 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`),
   ADD UNIQUE KEY `email` (`email`);
 
--- Indexes for table `admins`
-ALTER TABLE `admins`
-  ADD PRIMARY KEY (`admin_id`),
-  ADD UNIQUE KEY `email` (`email`);
-
 --
 -- Indexes for table `vets`
 --
@@ -232,6 +227,11 @@ CREATE TABLE `admins` (
   `email` varchar(100) NOT NULL,
   `password_hash` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Indexes for table `admins`
+ALTER TABLE `admins`
+  ADD PRIMARY KEY (`admin_id`),
+  ADD UNIQUE KEY `email` (`email`);
+
 
 --
 -- AUTO_INCREMENT for table `pets`
