@@ -47,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" class="btn">Login</button>
         </form>
+        <br>
+        <p>Back to the main <a href="login.php">User Login</a></p>
     </div>
 </body>
 </html>
