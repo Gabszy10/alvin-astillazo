@@ -282,8 +282,9 @@ session_start();
             }
         }
 
-        async function fetchAppointmentTypes() {
-            const response = await fetch('get_appointment_types.php');
+        async function fetchAppointmentTypes(petType) {
+            const url = 'get_appointment_types.php' + (petType ? `?pet_type=${encodeURIComponent(petType)}` : '');
+            const response = await fetch(url);
             const data = await response.json().catch(() => ({success:false}));
             if (data.success) {
                 appointmentTypes = data.types;
@@ -338,15 +339,16 @@ session_start();
             updateActiveNav('home');
         }
 
-        function showSchedule() {
-            document.querySelector('.home-section').style.display = 'none';
-            document.querySelector('.schedule-section').style.display = 'block';
-            document.querySelector('.registration-section').style.display = 'none';
-            document.querySelector('.appointments-section').style.display = 'none';
+       function showSchedule() {
+           document.querySelector('.home-section').style.display = 'none';
+           document.querySelector('.schedule-section').style.display = 'block';
+           document.querySelector('.registration-section').style.display = 'none';
+           document.querySelector('.appointments-section').style.display = 'none';
 
-            // Update active nav link
-            updateActiveNav('schedule');
-        }
+           // Update active nav link
+           updateActiveNav('schedule');
+           fetchSchedule();
+       }
 
         function showRegistration() {
             document.querySelector('.home-section').style.display = 'none';
@@ -400,7 +402,7 @@ session_start();
             return d.toISOString().split('T')[0];
         }
 
-        function showBookingModal(day, timeRange, vet, vetId, start, end) {
+       function showBookingModal(day, timeRange, vet, vetId, start, end) {
             document.getElementById('modalDateTime').textContent = `${day}, ${timeRange}`;
             document.getElementById('modalVet').textContent = vet;
             document.getElementById('appointmentDate').value = getNextDateForDay(day);
@@ -423,26 +425,44 @@ session_start();
                     const option = document.createElement('option');
                     option.value = pet.id;
                     option.textContent = `${pet.name} (${pet.type})`;
+                    option.dataset.type = pet.type;
                     petSelect.appendChild(option);
                 });
             }
 
             const reasonSelect = document.getElementById('appointmentReason');
-            reasonSelect.innerHTML = '<option value="">Select reason</option>';
-            if (appointmentTypes.length === 0) {
-                const opt = document.createElement('option');
-                opt.value = '';
-                opt.textContent = 'No appointment types available';
-                opt.disabled = true;
-                reasonSelect.appendChild(opt);
-            } else {
-                appointmentTypes.forEach(type => {
-                    const option = document.createElement('option');
-                    option.value = type.id;
-                    option.textContent = type.name;
-                    reasonSelect.appendChild(option);
-                });
+            async function loadReasons(type) {
+                await fetchAppointmentTypes(type.toLowerCase());
+                reasonSelect.innerHTML = '<option value="">Select reason</option>';
+                if (appointmentTypes.length === 0) {
+                    const opt = document.createElement('option');
+                    opt.value = '';
+                    opt.textContent = 'No appointment types available';
+                    opt.disabled = true;
+                    reasonSelect.appendChild(opt);
+                } else {
+                    appointmentTypes.forEach(t => {
+                        const o = document.createElement('option');
+                        o.value = t.id;
+                        o.textContent = t.name;
+                        reasonSelect.appendChild(o);
+                    });
+                }
             }
+
+            if (petSelect.options.length > 1) {
+                const firstPetType = petSelect.options[1].dataset.type || '';
+                petSelect.selectedIndex = 1;
+                loadReasons(firstPetType);
+            } else {
+                loadReasons('');
+            }
+
+            petSelect.onchange = () => {
+                const selected = petSelect.options[petSelect.selectedIndex];
+                const type = selected ? selected.dataset.type : '';
+                loadReasons(type);
+            };
 
             document.getElementById('bookingModal').style.display = 'flex';
         }

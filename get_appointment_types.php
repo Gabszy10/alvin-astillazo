@@ -4,7 +4,13 @@ header('Content-Type: application/json');
 
 $conn = getDBConnection();
 
-$sql = "SELECT type_id, type_name FROM appointment_types";
+$petType = strtolower($_GET['pet_type'] ?? '');
+$petFilter = '';
+if ($petType) {
+    $petFilter = " WHERE LOWER(pet_type) = '" . $conn->real_escape_string($petType) . "'";
+}
+
+$sql = "SELECT type_id, type_name FROM appointment_types" . $petFilter;
 $result = $conn->query($sql);
 
 $types = [];

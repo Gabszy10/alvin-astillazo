@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Normalize values to match enum types in the `pets` table
     $petTypeNormalized = strtolower($petType);
-    if (!in_array($petTypeNormalized, ['dog', 'cat', 'bird', 'rabbit'])) {
+    if (!in_array($petTypeNormalized, ['dog', 'cat', 'bird', 'rabbit', 'reptile', 'small mammal'])) {
         $petTypeNormalized = 'other';
     }
 
