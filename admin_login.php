@@ -7,13 +7,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn = getDBConnection();
     $email = $conn->real_escape_string($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
-    $result = $conn->query("SELECT user_id, full_name, password_hash FROM users WHERE email = '$email'");
+    $result = $conn->query("SELECT admin_id, full_name, password_hash FROM admins WHERE email = '$email'");
     if ($result && $result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-        if (password_verify($password, $user['password_hash'])) {
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['full_name'] = $user['full_name'];
-            header('Location: index.php');
+        $admin = $result->fetch_assoc();
+        if (password_verify($password, $admin['password_hash'])) {
+            $_SESSION['admin_id'] = $admin['admin_id'];
+            $_SESSION['admin_name'] = $admin['full_name'];
+            header('Location: admin_dashboard.php');
             exit();
         }
     }
@@ -22,18 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Admin Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-    <?php include 'header.php'; ?>
+    <?php include 'header_admin.php'; ?>
     <div class="container">
-        <h2>Login</h2>
+        <h2>Admin Login</h2>
         <br>
         <?php if ($error): ?>
             <p class="error"><?php echo $error; ?></p>
@@ -50,10 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="btn">Login</button>
         </form>
         <br>
-        <p>Don't have an account? <a href="register.php">Register here</a></p>
-        <p>Are you a veterinarian? <a href="doctor_login.php">Doctor Login</a></p>
-        <p>Admin user? <a href="admin_login.php">Admin Login</a></p>
+        <p>Back to the main <a href="login.php">User Login</a></p>
     </div>
 </body>
-
 </html>
