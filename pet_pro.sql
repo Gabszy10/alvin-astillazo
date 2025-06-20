@@ -172,6 +172,11 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`),
   ADD UNIQUE KEY `email` (`email`);
 
+-- Indexes for table `admins`
+ALTER TABLE `admins`
+  ADD PRIMARY KEY (`admin_id`),
+  ADD UNIQUE KEY `email` (`email`);
+
 --
 -- Indexes for table `vets`
 --
@@ -220,6 +225,14 @@ INSERT INTO `appointment_types` (`type_name`, `pet_type`, `description`, `durati
 ('Nutrition Advice', 'small mammal', 'Diet consultation', 15),
 ('General Examination', 'other', 'General health exam', 30);
 
+-- Table structure for table `admins`
+CREATE TABLE `admins` (
+  `admin_id` int(11) NOT NULL,
+  `full_name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password_hash` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- AUTO_INCREMENT for table `pets`
 --
@@ -238,6 +251,10 @@ ALTER TABLE `pet_breeds`
 --
 ALTER TABLE `users`
   MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+
+-- AUTO_INCREMENT for table `admins`
+ALTER TABLE `admins`
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `vets`
