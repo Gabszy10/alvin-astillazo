@@ -148,7 +148,7 @@ ALTER TABLE `appointments`
 --
 ALTER TABLE `appointment_types`
   ADD PRIMARY KEY (`type_id`),
-  ADD UNIQUE KEY `type_name` (`type_name`);
+  ADD KEY `type_name` (`type_name`);
 
 --
 -- Indexes for table `pets`
