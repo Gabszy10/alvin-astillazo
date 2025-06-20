@@ -10,3 +10,9 @@ a `password_hash` column in the `vets` table for authentication.
 
 The regular `login.php` page also provides a link to the doctor login for easy
 access.
+
+## Admin Accounts
+
+Administrators can sign in through `admin_login.php`. Upon successful login they
+are taken to `admin_dashboard.php`, which lists all registered veterinarians.
+Admin credentials are stored in a new `admins` table created in `pet_pro.sql`.
