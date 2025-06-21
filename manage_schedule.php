@@ -53,7 +53,7 @@ $conn->close();
 </head>
 <body>
 <?php include 'header_admin.php'; ?>
-<div class="container">
+<div class="container form-container">
     <h2>Manage Vet Availability</h2>
     <h3>Add New Slot</h3>
     <form method="POST">
@@ -88,14 +88,14 @@ $conn->close();
                 <label for="end_time">End Time</label>
                 <input class="form-control" type="time" id="end_time" name="end_time" required>
             </div>
-            <div class="form-group" style="padding-top:1.5rem;">
+            <div class="form-group form-check">
                 <label><input type="checkbox" name="is_available" checked> Available</label>
             </div>
         </div>
         <button type="submit" class="btn">Add Slot</button>
     </form>
 
-    <h3 style="margin-top:2rem;">Existing Slots</h3>
+    <h3 class="mt-2">Existing Slots</h3>
     <table class="schedule-table">
         <thead>
             <tr>
