@@ -65,7 +65,7 @@ $conn->close();
 </head>
 <body>
 <?php include 'header_admin.php'; ?>
-<div class="container">
+<div class="container form-container">
     <h2>Manage Veterinarians</h2>
     <h3><?php echo $editVet ? 'Edit Vet' : 'Add New Vet'; ?></h3>
     <form method="POST">
@@ -99,7 +99,7 @@ $conn->close();
         <?php endif; ?>
     </form>
 
-    <h3 style="margin-top:2rem;">Existing Vets</h3>
+    <h3 class="mt-2">Existing Vets</h3>
     <table class="schedule-table">
         <thead>
             <tr>

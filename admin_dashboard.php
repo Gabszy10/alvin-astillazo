@@ -25,7 +25,7 @@ $conn->close();
 </head>
 <body>
 <?php include 'header_admin.php'; ?>
-<div class="container">
+<div class="container form-container">
     <h2>Welcome, <?php echo htmlspecialchars($_SESSION['admin_name']); ?></h2>
     <h3>Registered Veterinarians</h3>
     <p><a class="btn" href="manage_vets.php">Add / Edit Vets</a></p>

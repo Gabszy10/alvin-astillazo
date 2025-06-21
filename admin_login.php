@@ -30,9 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <?php include 'header_admin.php'; ?>
-    <div class="container">
+    <div class="container form-container">
         <h2>Admin Login</h2>
-        <br>
         <?php if ($error): ?>
             <p class="error"><?php echo $error; ?></p>
         <?php endif; ?>
@@ -47,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" class="btn">Login</button>
         </form>
-        <br>
         <p>Back to the main <a href="login.php">User Login</a></p>
     </div>
 </body>
