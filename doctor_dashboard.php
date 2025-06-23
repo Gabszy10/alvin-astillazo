@@ -54,6 +54,7 @@ $conn->close();
                 <th>Time</th>
                 <th>Reason</th>
                 <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -65,6 +66,18 @@ $conn->close();
                 <td><?php echo htmlspecialchars($row['start_time'] . ' - ' . $row['end_time']); ?></td>
                 <td><?php echo htmlspecialchars($row['type_name']); ?></td>
                 <td><?php echo htmlspecialchars($row['status']); ?></td>
+                <td>
+                    <form method="POST" action="update_appointment_status.php" style="display:inline;">
+                        <input type="hidden" name="appointment_id" value="<?php echo $row['appointment_id']; ?>">
+                        <input type="hidden" name="status" value="completed">
+                        <button type="submit" class="btn" style="padding:0.3rem 0.6rem;">Complete</button>
+                    </form>
+                    <form method="POST" action="update_appointment_status.php" style="display:inline;">
+                        <input type="hidden" name="appointment_id" value="<?php echo $row['appointment_id']; ?>">
+                        <input type="hidden" name="status" value="cancelled">
+                        <button type="submit" class="btn" style="background-color: var(--danger-color); padding:0.3rem 0.6rem;">Cancel</button>
+                    </form>
+                </td>
             </tr>
         <?php endforeach; ?>
         </tbody>
